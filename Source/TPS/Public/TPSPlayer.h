@@ -26,4 +26,24 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	#pragma region Components
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Components")
+	class USpringArmComponent* springArmComp;
+
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Components")
+	class UCameraComponent* cameraComp;
+	#pragma endregion
+
+	#pragma region Input Actions
+	void OnAxisHorizontal(float value);
+	void OnAxisVertical(float value);
+	void OnAxisLookUp(float value);
+	void OnAxisTurnRight(float value);
+	void OnActionJump();
+	#pragma endregion
+
+	#pragma region Movement
+	FVector direction;
+	float walkSpeed = 600;
+	#pragma endregion
 };
