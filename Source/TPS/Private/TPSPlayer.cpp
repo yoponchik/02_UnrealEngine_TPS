@@ -5,6 +5,7 @@
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
 #include <GameFramework/CharacterMovementComponent.h>
+#include "BulletActor.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -27,7 +28,18 @@ ATPSPlayer::ATPSPlayer()
 
 	springArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm Component"));
 	cameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
-	#pragma endregion
+	
+	//regular gun component
+	gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Skeletal Component"));
+	gunMeshComp->SetupAttachment(GetMesh());
+	
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
+
+	if (tempGunMesh.Succeeded()) {
+		gunMeshComp->SetSkeletalMesh(tempGunMesh.Object);
+		gunMeshComp->SetRelativeLocationAndRotation(FVector(0, 50, 130), FRotator(0));
+	}
+#pragma endregion
 
 	#pragma region Components Default Values
 	//attaching spring arm to root component
@@ -85,8 +97,13 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAxis(TEXT("Vertical"), this, &ATPSPlayer::OnAxisVertical);
 	PlayerInputComponent->BindAxis(TEXT("Look Up"), this, &ATPSPlayer::OnAxisLookUp);
 	PlayerInputComponent->BindAxis(TEXT("Turn Right"), this, &ATPSPlayer::OnAxisTurnRight);
+	
+	PlayerInputComponent->BindAction(TEXT("Jump"),IE_Pressed, this, &ATPSPlayer::OnActionJump);
 	#pragma endregion
-	PlayerInputComponent->BindAction(TEXT("Horizontal"),IE_Pressed, this, &ATPSPlayer::OnActionJump);
+	PlayerInputComponent->BindAction(TEXT("Fire"),IE_Pressed, this, &ATPSPlayer::OnActionFirePressed);
+	PlayerInputComponent->BindAction(TEXT("Fire"),IE_Released, this, &ATPSPlayer::OnActionFireReleased);
+
+
 }
 
 #pragma region Input Actions
@@ -116,4 +133,21 @@ void ATPSPlayer::OnActionJump()
 {
 	Jump();
 }
+
+void ATPSPlayer::OnActionFirePressed()
+{
+	Fire();
+}
+
+void ATPSPlayer::OnActionFireReleased()
+{
+
+}
+
+void ATPSPlayer::Fire()
+{
+	FTransform firePosition = gunMeshComp->GetSocketTransform(TEXT("FirePosition"));
+	GetWorld()->SpawnActor<ABulletActor>(bulletFactory, firePosition);
+}
+
 #pragma endregion

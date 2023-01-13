@@ -39,8 +39,20 @@ public:
 	void OnAxisVertical(float value);
 	void OnAxisLookUp(float value);
 	void OnAxisTurnRight(float value);
+	
 	void OnActionJump();
+	void OnActionFirePressed();
+	void OnActionFireReleased();
 	#pragma endregion
+	
+	void Fire();
+
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ABulletActor> bulletFactory;
+
+	UPROPERTY(EditAnywhere)
+	class USkeletalMeshComponent* gunMeshComp;
 
 	#pragma region Movement
 	FVector direction;
