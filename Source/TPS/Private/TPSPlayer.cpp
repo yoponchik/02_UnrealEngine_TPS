@@ -136,11 +136,17 @@ void ATPSPlayer::OnActionJump()
 
 void ATPSPlayer::OnActionFirePressed()
 {
+	//Fire();
+
+	//AutoFire
+	GetWorldTimerManager().SetTimer(fireTimerHandle, this, &ATPSPlayer::Fire, fireInterval, true);
+
 	Fire();
 }
 
 void ATPSPlayer::OnActionFireReleased()
 {
+	GetWorldTimerManager().ClearTimer(fireTimerHandle);
 
 }
 

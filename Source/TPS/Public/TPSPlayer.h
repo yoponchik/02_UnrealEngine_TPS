@@ -45,17 +45,24 @@ public:
 	void OnActionFireReleased();
 	#pragma endregion
 	
-	void Fire();
-
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class ABulletActor> bulletFactory;
-
-	UPROPERTY(EditAnywhere)
-	class USkeletalMeshComponent* gunMeshComp;
-
-	#pragma region Movement
+#pragma region Movement
 	FVector direction;
 	float walkSpeed = 600;
-	#pragma endregion
+#pragma endregion
+
+	void Fire();
+
+	//AutoFire
+	FTimerHandle fireTimerHandle;						//this is like a receipt
+
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	float fireInterval = 0.5f;
+
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	TSubclassOf<class ABulletActor> bulletFactory;
+
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	class USkeletalMeshComponent* gunMeshComp;
+
+
 };
