@@ -30,7 +30,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Player Settings | Components")
 	class USpringArmComponent* springArmComp;
 
-	UPROPERTY(EditAnywhere, Category = "Player Settings | Components")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Settings | Gun Settings")
 	class UCameraComponent* cameraComp;
 	#pragma endregion
 
@@ -61,7 +61,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
 	TSubclassOf<class ABulletActor> bulletFactory;
 
-	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Settings | Gun Settings")
 	class USkeletalMeshComponent* gunMeshComp;
 
 
