@@ -34,5 +34,7 @@ public:
 	class UProjectileMovementComponent* projMoveComp;
 #pragma endregion
 
+	UFUNCTION()
+	void OnDie();
 
 };

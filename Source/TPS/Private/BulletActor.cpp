@@ -6,7 +6,7 @@
 #include <Components/SphereComponent.h>
 #include <Components/StaticMeshComponent.h>
 #include <GameFramework/ProjectileMovementComponent.h>
-
+#include "../TPS.h"
 
 
 // Sets default values
@@ -43,6 +43,22 @@ void ABulletActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//Method 1
+	//SetLifeSpan(2);
+
+	//Method 2
+	//FTimerHandle dieTimerHandle;
+	//GetWorldTimerManager().SetTimer(dieTimerHandle, this, &ABulletActor::OnDie, 0.1f);
+
+	//Method 3 - Lambda Function
+	//Capture(?)
+#pragma region Lambda Capture Example
+	//auto myPlus = [this](int a, int b)->int {return a + b; };
+	//PRINT_LOG(TEXT("%d"), myPlus(10, 20));
+#pragma endregion
+
+	FTimerHandle dieTimerHandle;
+	GetWorldTimerManager().SetTimer(dieTimerHandle, FTimerDelegate::CreateLambda([this]()->void {this->Destroy(); }), 2, false);
 }
 
 // Called every frame
@@ -50,5 +66,10 @@ void ABulletActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ABulletActor::OnDie()
+{
+	Destroy();
 }
 
