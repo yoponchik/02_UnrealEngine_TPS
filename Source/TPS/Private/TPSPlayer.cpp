@@ -153,6 +153,9 @@ void ATPSPlayer::OnActionFireReleased()
 void ATPSPlayer::Fire()
 {
 	FTransform firePosition = gunMeshComp->GetSocketTransform(TEXT("FirePosition"));
+
+	firePosition.SetRotation(FQuat(GetControlRotation()));
+
 	GetWorld()->SpawnActor<ABulletActor>(bulletFactory, firePosition);
 }
 
