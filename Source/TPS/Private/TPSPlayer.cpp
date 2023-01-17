@@ -34,17 +34,24 @@ ATPSPlayer::ATPSPlayer()
 	gunMeshComp->SetupAttachment(GetMesh());
 	
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
-
 	if (tempGunMesh.Succeeded()) {
 		gunMeshComp->SetSkeletalMesh(tempGunMesh.Object);
 		gunMeshComp->SetRelativeLocationAndRotation(FVector(0, 50, 130), FRotator(0));
 	}
+
+	sniperMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sniper Mesh Component"));
+	sniperMeshComp->SetupAttachment(GetMesh());
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tempSniperMesh(TEXT("/Script/Engine.StaticMesh'/Game/Sniper/sniper1.sniper1'"));
+	if (tempSniperMesh.Succeeded()) {
+		sniperMeshComp->SetStaticMesh(tempSniperMesh.Object);
+		sniperMeshComp->SetRelativeLocationAndRotation(FVector(0,50,140), FRotator(0,0,0));
+		sniperMeshComp->SetRelativeScale3D(FVector(0.15f));
+	}
 #pragma endregion
 
 	#pragma region Components Default Values
-	//attaching spring arm to root component
 	springArmComp->SetupAttachment(RootComponent);
-	//attaching camera comp to spring arm component
 	cameraComp->SetupAttachment(springArmComp);
 
 	//Setup default values for the spring arm
@@ -67,6 +74,8 @@ ATPSPlayer::ATPSPlayer()
 void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ChooseGun(true);
 }
 
 // Called every frame
@@ -103,6 +112,9 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction(TEXT("Fire"),IE_Pressed, this, &ATPSPlayer::OnActionFirePressed);
 	PlayerInputComponent->BindAction(TEXT("Fire"),IE_Released, this, &ATPSPlayer::OnActionFireReleased);
 
+
+	PlayerInputComponent->BindAction(TEXT("Grenade Launcher"),IE_Pressed, this, &ATPSPlayer::OnActionGrenadeLauncher);
+	PlayerInputComponent->BindAction(TEXT("Sniper"),IE_Pressed, this, &ATPSPlayer::OnActionSniper);
 
 }
 
@@ -149,6 +161,7 @@ void ATPSPlayer::OnActionFireReleased()
 	GetWorldTimerManager().ClearTimer(fireTimerHandle);
 
 }
+#pragma endregion
 
 void ATPSPlayer::Fire()
 {
@@ -159,4 +172,29 @@ void ATPSPlayer::Fire()
 	GetWorld()->SpawnActor<ABulletActor>(bulletFactory, firePosition);
 }
 
-#pragma endregion
+void ATPSPlayer::ChooseGun(bool bGrenadeLauncher)
+{
+	bIsGrenadeLauncher = bGrenadeLauncher;
+
+	gunMeshComp->SetVisibility(bGrenadeLauncher);
+	sniperMeshComp->SetVisibility(!bGrenadeLauncher);
+	
+	//Same thing
+	//sniperMeshComp->SetVisibility(bChooseGrenadeLauncher ? false : true);
+}
+
+void ATPSPlayer::OnActionGrenadeLauncher()
+{
+	ChooseGun(true);
+	//Same using macros
+	//ChooseGun(GRENADELAUNCHER);
+}
+
+void ATPSPlayer::OnActionSniper()
+{
+	ChooseGun(false);
+
+	//Same using macros
+	//ChooseGun(SNIPER);
+}
+

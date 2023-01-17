@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "TPSPlayer.generated.h"
 
+#define GRENADELAUNCHER true
+#define SNIPER true
+
 UCLASS()
 class TPS_API ATPSPlayer : public ACharacter
 {
@@ -32,6 +35,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Settings | Gun Settings")
 	class UCameraComponent* cameraComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Settings | Gun Settings")
+	class USkeletalMeshComponent* gunMeshComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Settings | Gun Settings")
+	class UStaticMeshComponent* sniperMeshComp;
 	#pragma endregion
 
 	#pragma region Input Actions
@@ -50,19 +59,39 @@ public:
 	float walkSpeed = 600;
 #pragma endregion
 
-	void Fire();
-
-	//AutoFire
-	FTimerHandle fireTimerHandle;						//this is like a receipt
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	TSubclassOf<class ABulletActor> bulletFactory;
 
 	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
 	float fireInterval = 0.5f;
 
-	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
-	TSubclassOf<class ABulletActor> bulletFactory;
+	//AutoFire
+	FTimerHandle fireTimerHandle;						//this is like a receipt
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Settings | Gun Settings")
-	class USkeletalMeshComponent* gunMeshComp;
+	void Fire();
+
+#pragma region UI Widgets
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	TSubclassOf<class UUserWidget> crossHairFactory;
+	
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	TSubclassOf<class UUserWidget> sniperCrossHairFactory;
+
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	class UUserWidget* crossHairUI;
+
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	class UUserWidget* sniperCrosshairUI;
+
+	void ChooseGun(bool bGrenadeLauncher);
+
+	void OnActionGrenadeLauncher();
+	void OnActionSniper();
+
+	bool bIsGrenadeLauncher;
+#pragma endregion
+
+
 
 
 };
