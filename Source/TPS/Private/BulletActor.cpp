@@ -45,12 +45,15 @@ void ABulletActor::BeginPlay()
 	
 	//Method 1
 	//SetLifeSpan(2);
-
+	
 	//Method 2
+	//InitialLifeSpan = 2;
+
+	//Method 3
 	//FTimerHandle dieTimerHandle;
 	//GetWorldTimerManager().SetTimer(dieTimerHandle, this, &ABulletActor::OnDie, 0.1f);
 
-	//Method 3 - Lambda Function
+	//Method 4 - Lambda Function
 	//Capture(?)
 #pragma region Lambda Capture Example
 	//auto myPlus = [this](int a, int b)->int {return a + b; };
