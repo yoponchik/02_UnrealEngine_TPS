@@ -91,6 +91,7 @@ public:
 	void OnActionZoomIn();
 	void OnActionZoomOut();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Settings | Gun Settings")
 	bool bIsGrenadeLauncher;
 #pragma endregion
 
