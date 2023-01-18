@@ -71,22 +71,25 @@ public:
 	void Fire();
 
 #pragma region UI Widgets
-	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Settings | Gun Settings")
 	TSubclassOf<class UUserWidget> crossHairFactory;
 	
-	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Settings | Gun Settings")
 	TSubclassOf<class UUserWidget> sniperCrossHairFactory;
 
-	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Settings | Gun Settings")
 	class UUserWidget* crossHairUI;
 
-	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Settings | Gun Settings")
 	class UUserWidget* sniperCrosshairUI;
 
 	void ChooseGun(bool bGrenadeLauncher);
 
 	void OnActionGrenadeLauncher();
 	void OnActionSniper();
+
+	void OnActionZoomIn();
+	void OnActionZoomOut();
 
 	bool bIsGrenadeLauncher;
 #pragma endregion

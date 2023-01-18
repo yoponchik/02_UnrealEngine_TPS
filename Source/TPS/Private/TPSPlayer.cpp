@@ -6,6 +6,8 @@
 #include <Camera/CameraComponent.h>
 #include <GameFramework/CharacterMovementComponent.h>
 #include "BulletActor.h"
+#include <UMG/Public/Blueprint/UserWidget.h>
+#include "Blueprint/UserWidget.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -75,7 +77,16 @@ void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	#pragma region Widgets
+	crossHairUI = CreateWidget(GetWorld(), crossHairFactory);
+	sniperCrosshairUI = CreateWidget(GetWorld(), sniperCrossHairFactory);
+
+	crossHairUI->AddToViewport();
+	#pragma endregion
+
 	ChooseGun(true);
+	//ChooseGun(GRENADELAUNCHER);
+
 }
 
 // Called every frame
@@ -109,13 +120,18 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	
 	PlayerInputComponent->BindAction(TEXT("Jump"),IE_Pressed, this, &ATPSPlayer::OnActionJump);
 	#pragma endregion
+
+#pragma region Gun
 	PlayerInputComponent->BindAction(TEXT("Fire"),IE_Pressed, this, &ATPSPlayer::OnActionFirePressed);
 	PlayerInputComponent->BindAction(TEXT("Fire"),IE_Released, this, &ATPSPlayer::OnActionFireReleased);
 
 
 	PlayerInputComponent->BindAction(TEXT("Grenade Launcher"),IE_Pressed, this, &ATPSPlayer::OnActionGrenadeLauncher);
 	PlayerInputComponent->BindAction(TEXT("Sniper"),IE_Pressed, this, &ATPSPlayer::OnActionSniper);
-
+	
+	PlayerInputComponent->BindAction(TEXT("Zoom"),IE_Pressed, this, &ATPSPlayer::OnActionZoomIn);
+	PlayerInputComponent->BindAction(TEXT("Zoom"),IE_Released, this, &ATPSPlayer::OnActionZoomOut);
+#pragma endregion
 }
 
 #pragma region Input Actions
@@ -174,6 +190,14 @@ void ATPSPlayer::Fire()
 
 void ATPSPlayer::ChooseGun(bool bGrenadeLauncher)
 {
+
+	//If current gun is a sniper, and I want to change to the grenade launcher
+	if (!bIsGrenadeLauncher && bGrenadeLauncher) {
+		cameraComp->SetFieldOfView(90);
+		crossHairUI->AddToViewport();
+		sniperCrosshairUI->RemoveFromParent();
+	}
+
 	bIsGrenadeLauncher = bGrenadeLauncher;
 
 	gunMeshComp->SetVisibility(bGrenadeLauncher);
@@ -196,5 +220,25 @@ void ATPSPlayer::OnActionSniper()
 
 	//Same using macros
 	//ChooseGun(SNIPER);
+}
+
+void ATPSPlayer::OnActionZoomIn()
+{
+	if (bIsGrenadeLauncher) { return; }
+
+	cameraComp->SetFieldOfView(30);
+
+	crossHairUI->RemoveFromParent();
+	sniperCrosshairUI->AddToViewport();
+}
+
+void ATPSPlayer::OnActionZoomOut()
+{
+	if (bIsGrenadeLauncher) { return; }
+
+	cameraComp->SetFieldOfView(90);
+
+	sniperCrosshairUI->RemoveFromParent();
+	crossHairUI->AddToViewport();
 }
 
