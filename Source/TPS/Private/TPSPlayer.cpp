@@ -166,10 +166,48 @@ void ATPSPlayer::OnActionFirePressed()
 {
 	//Fire();
 
-	//AutoFire
-	GetWorldTimerManager().SetTimer(fireTimerHandle, this, &ATPSPlayer::Fire, fireInterval, true);
+	if (bIsGrenadeLauncher) {
+		//when grenade launched
+		GetWorldTimerManager().SetTimer(fireTimerHandle, this, &ATPSPlayer::Fire, fireInterval, true);
+		Fire();
+	}
+	else {
+		//when sniper
+		FHitResult hitInfo;
+		FVector traceStart = cameraComp->GetComponentLocation();
+		FVector traceEnd = traceStart + cameraComp->GetForwardVector() * 100000;
 
-	Fire();
+		FCollisionQueryParams params;
+		params.AddIgnoredActor(this);
+
+		bool bisHit = GetWorld()->LineTraceSingleByChannel(hitInfo, traceStart, traceEnd, ECollisionChannel::ECC_Visibility, params);
+
+		//if there is something hit
+		if (bisHit) {
+			//auto hitComp = hitInfo.GetComponent();
+			UPrimitiveComponent* hitComp = hitInfo.GetComponent();
+
+			//if the hitComp is not a nullptr and is simulating physics
+			if (hitComp && hitComp->IsSimulatingPhysics()) {
+				
+				//Force in the direction from the line trace's start to its end
+				//FVector hitForceDir = (hitInfo.TraceEnd - hitInfo.TraceStart).GetSafeNormal();
+				
+				FVector hitForceDir = (hitInfo.TraceEnd - hitInfo.TraceStart);
+				hitForceDir.Normalize();
+
+				FVector hitForce = hitForceDir * 1000000 * hitComp->GetMass();
+				hitComp->AddForce(hitForce);
+			}
+		}
+	}
+
+	//AutoFire
+	//GetWorldTimerManager().SetTimer(fireTimerHandle, this, &ATPSPlayer::Fire, fireInterval, true);
+
+	//Fire();
+
+
 }
 
 void ATPSPlayer::OnActionFireReleased()
