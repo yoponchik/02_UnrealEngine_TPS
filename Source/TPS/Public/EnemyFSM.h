@@ -45,6 +45,11 @@ public:
 	float currentTime = 0;
 	bool bAttackPlay;
 
+	void OnDamageProcess(int damageAmount);
+
+	int enemyHP;
+	int enemyMaxHP = 2;
+
 private:
 	void OnTickIdle();
 	void OnTickDie();

@@ -7,6 +7,7 @@
 #include "Enemy.h"
 #include <GameFramework/CharacterMovementComponent.h>
 #include "../TPS.h"
+#include <Components/CapsuleComponent.h>
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -31,6 +32,8 @@ void UEnemyFSM::BeginPlay()
 	me = Cast<AEnemy>(GetOwner());
 	//add
 	me->GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	enemyHP = enemyMaxHP;
 }
 
 
@@ -61,6 +64,24 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	}
 }
 
+void UEnemyFSM::OnTickMove()
+{
+
+	FVector dir = target->GetActorLocation() - me->GetActorLocation();
+	me->AddMovementInput(dir.GetSafeNormal());
+
+	float dist = dir.Size();				//it's okay to do this after normalizing, because we did GetSafeNormal, which copied it
+	//Same thing
+	//float dist = target->GetDistanceTo(me);
+	//Same thing
+	//float dist = FVector::Dist(target->GetActorLocation(), me->GetActorLocation());
+
+	if (dist <= attackDistance) {
+		enemyState = EEnemyState::ATTACK;
+	}
+}
+
+
 /// <summary>
 /// Idle; Transition to Move after finding player
 /// </summary>
@@ -79,15 +100,7 @@ void UEnemyFSM::OnTickIdle()
 	//3. transition to Move
 }
 
-void UEnemyFSM::OnTickDie()
-{
 
-}
-
-void UEnemyFSM::OnTickDamage()
-{
-
-}
 
 void UEnemyFSM::OnTickAttack()
 {
@@ -105,44 +118,72 @@ void UEnemyFSM::OnTickAttack()
 		}
 	}
 
-	if(currentTime > 2){
-		bAttackPlay = false;
-		currentTime = 0;
-		enemyState = EEnemyState::IDLE;
+
+	//5. if the attack action is finished
+	if (currentTime > 2) {
+	//6. Check if should attack or not
+		//6. if far from attackDistance, change to move
+		float distance = target->GetDistanceTo(me);
+		if (distance > attackDistance) {
+			//4. move
+			enemyState = EEnemyState::MOVE;
+		}
+		else {	//if inside the attackdistance
+			currentTime = 0;
+			bAttackPlay = false;
+		}
 	}
 
-	////5. if the attack action is finished
-	//if (currentTime > 2) {
-	////6. Check if should attack or not
-	//	//6. if far from attackDistance, change to move
-	//	float distance = target->GetDistanceTo(me);
-	//	if (distance > attackDistance) {
-	//		//4. move
-	//		enemyState = EEnemyState::MOVE;
-	//	}
-	//	else {	//if inside the attackdistance
-	//		currentTime = 0;
-	//		bAttackPlay = false;
-	//	}
+	#pragma region Alternative - Can be Buggy
+	//Possible bugginess because it has to go through all the other states; animation might be weird
+		//if(currentTime > 2){
+	//	bAttackPlay = false;
+	//	currentTime = 0;
+	//	enemyState = EEnemyState::IDLE;
 	//}
-
+#pragma endregion
 
 }
 
-void UEnemyFSM::OnTickMove()
+
+
+void UEnemyFSM::OnTickDamage()
 {
+	currentTime += GetWorld()->GetDeltaSeconds();
 
-	FVector dir = target->GetActorLocation() - me->GetActorLocation();
-	me->AddMovementInput(dir.GetSafeNormal());
-
-	float dist = dir.Size();				//it's okay to do this after normalizing, because we did GetSafeNormal, which copied it
-	//Same thing
-	//float dist = target->GetDistanceTo(me);
-	//Same thing
-	//float dist = FVector::Dist(target->GetActorLocation(), me->GetActorLocation());
-
-	if (dist <= attackDistance) {
-		enemyState = EEnemyState::ATTACK;
+	if (currentTime > 1) {
+		enemyState = EEnemyState::IDLE;
+		currentTime = 0;
 	}
 }
 
+//player->enemyaa
+//get hit by player
+void UEnemyFSM::OnDamageProcess(int damageAmount)
+{
+	//hp decreases
+	enemyHP -= damageAmount;
+	//if less than 0
+	if (enemyHP <= 0) {
+		enemyState = EEnemyState::DIE;
+		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	else {
+		enemyState = EEnemyState::DAMAGE;
+	}
+}
+
+void UEnemyFSM::OnTickDie()
+{
+	currentTime += GetWorld()->GetDeltaSeconds();
+
+	FVector p0 = me->GetActorLocation();
+	FVector velocity = FVector::DownVector * 200 * GetWorld()->GetDeltaSeconds();
+
+	me->SetActorLocation(p0 + velocity);
+
+	if (currentTime > 1) {
+		me->Destroy();
+		currentTime = 0;
+	}
+}
