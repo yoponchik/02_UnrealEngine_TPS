@@ -9,6 +9,8 @@
 #include <UMG/Public/Blueprint/UserWidget.h>
 #include "Blueprint/UserWidget.h"
 #include <Kismet/GameplayStatics.h>
+#include "Enemy.h"
+#include "EnemyFSM.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -192,6 +194,15 @@ void ATPSPlayer::OnActionFirePressed()
 
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletImpactFactory, trans);
 			
+			#pragma region Damage Enemy
+			AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
+			
+			if (enemy) {
+				UEnemyFSM* fsmComponent = Cast<UEnemyFSM>(enemy->GetDefaultSubobjectByName(TEXT("Enemy FSM")));
+				fsmComponent->OnDamageProcess(1);
+			}
+			#pragma endregion
+		
 			//auto hitComp = hitInfo.GetComponent();
 			UPrimitiveComponent* hitComp = hitInfo.GetComponent();
 
