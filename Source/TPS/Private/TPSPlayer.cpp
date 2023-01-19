@@ -8,6 +8,7 @@
 #include "BulletActor.h"
 #include <UMG/Public/Blueprint/UserWidget.h>
 #include "Blueprint/UserWidget.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -180,13 +181,21 @@ void ATPSPlayer::OnActionFirePressed()
 		FCollisionQueryParams params;
 		params.AddIgnoredActor(this);
 
+
 		bool bisHit = GetWorld()->LineTraceSingleByChannel(hitInfo, traceStart, traceEnd, ECollisionChannel::ECC_Visibility, params);
 
 		//if there is something hit
 		if (bisHit) {
+			
+			//make transform from impact point
+			FTransform trans(hitInfo.ImpactPoint);
+
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletImpactFactory, trans);
+			
 			//auto hitComp = hitInfo.GetComponent();
 			UPrimitiveComponent* hitComp = hitInfo.GetComponent();
 
+			//Give Physics Interaction
 			//if the hitComp is not a nullptr and is simulating physics
 			if (hitComp && hitComp->IsSimulatingPhysics()) {
 				

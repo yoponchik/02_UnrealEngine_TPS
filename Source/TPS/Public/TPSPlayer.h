@@ -95,6 +95,8 @@ public:
 	bool bIsGrenadeLauncher;
 #pragma endregion
 
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* bulletImpactFactory;
 
 
 
