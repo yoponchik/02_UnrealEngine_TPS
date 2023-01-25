@@ -19,7 +19,6 @@ AEnemy::AEnemy()
 
 	enemyFSM = CreateDefaultSubobject<UEnemyFSM>(TEXT("Enemy FSM"));
 
-	
 }
 
 // Called when the game starts or when spawned
