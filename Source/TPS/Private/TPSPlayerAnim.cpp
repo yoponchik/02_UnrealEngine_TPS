@@ -25,11 +25,13 @@ void UTPSPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 
 	//same thing
 	/*UCharacterMovementComponent* moveComp;
-	moveComp = owner->GetCharacterMovement();*/
+	moveComp = owner->GetCharacterMovement();
+	isInAir = moveComp->IsFalling();
+	*/
 	
 }
 
 void UTPSPlayerAnim::OnFire()
 {
-	Montage_Play(fireMontageFactory);
+	Montage_Play(fireMontageFactory,1.f);
 }

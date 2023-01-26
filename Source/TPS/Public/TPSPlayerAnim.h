@@ -27,6 +27,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UAnimMontage* fireMontageFactory;
-	
+
+	UFUNCTION()
 	void OnFire();
 };
