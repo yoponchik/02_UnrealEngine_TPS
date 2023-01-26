@@ -98,6 +98,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* bulletImpactFactory;
 
+	//Animation
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* fireMontageFactory;
 
-
+	UPROPERTY(EditAnywhere)			//don't need UPROPERTY because we find the file in the constructor automatically
+	class USoundBase* sniperFireSound;
 };

@@ -11,6 +11,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "Enemy.h"
 #include "EnemyFSM.h"
+#include "TPSPlayerAnim.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -36,21 +37,22 @@ ATPSPlayer::ATPSPlayer()
 	
 	//regular gun component
 	gunMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Skeletal Component"));
-	gunMeshComp->SetupAttachment(GetMesh());
+	gunMeshComp->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
+
 	
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
 	if (tempGunMesh.Succeeded()) {
 		gunMeshComp->SetSkeletalMesh(tempGunMesh.Object);
-		gunMeshComp->SetRelativeLocationAndRotation(FVector(0, 50, 130), FRotator(0));
+		gunMeshComp->SetRelativeLocationAndRotation(FVector((-7.210181,4.476700,-1.526383)), FRotator((9.846552,100.151081,-6.164327)));
 	}
 
 	sniperMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sniper Mesh Component"));
-	sniperMeshComp->SetupAttachment(GetMesh());
+	sniperMeshComp->SetupAttachment(GetMesh(),TEXT("hand_rSocket"));
 
 	ConstructorHelpers::FObjectFinder<UStaticMesh> tempSniperMesh(TEXT("/Script/Engine.StaticMesh'/Game/Sniper/sniper1.sniper1'"));
 	if (tempSniperMesh.Succeeded()) {
 		sniperMeshComp->SetStaticMesh(tempSniperMesh.Object);
-		sniperMeshComp->SetRelativeLocationAndRotation(FVector(0,50,140), FRotator(0,0,0));
+		sniperMeshComp->SetRelativeLocationAndRotation(FVector((-39.736726,-1.088210,5.370206)), FRotator(13.476263,93.889126,-5.453882));
 		sniperMeshComp->SetRelativeScale3D(FVector(0.15f));
 	}
 #pragma endregion
@@ -73,6 +75,14 @@ ATPSPlayer::ATPSPlayer()
 	//UCharacterMovementComponent* cMC = GetCharacterMovement();
 	//cMC->bOrientRotationToMovement = true;
 #pragma endregion
+
+	ConstructorHelpers::FObjectFinder<USoundBase> tempFireSound(TEXT("/Script/Engine.SoundWave'/Game/Sniper/Rifle.Rifle'"));
+
+	if(tempFireSound.Succeeded()){
+
+		sniperFireSound = tempFireSound.Object;
+	}
+
 }
 
 // Called when the game starts or when spawned
@@ -167,8 +177,15 @@ void ATPSPlayer::OnActionJump()
 
 void ATPSPlayer::OnActionFirePressed()
 {
-	//Fire();
+	//Play shooting animation
+	UTPSPlayerAnim* anim = Cast<UTPSPlayerAnim>(GetMesh()->GetAnimInstance());
+	if(anim){
+		anim->OnFire();
+	}
 
+	//Sound FX
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), sniperFireSound, GetActorLocation(), GetActorRotation());
+	
 	if (bIsGrenadeLauncher) {
 		//when grenade launched
 		GetWorldTimerManager().SetTimer(fireTimerHandle, this, &ATPSPlayer::Fire, fireInterval, true);
