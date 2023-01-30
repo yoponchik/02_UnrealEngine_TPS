@@ -50,13 +50,25 @@ public:
 	void OnAxisTurnRight(float value);
 	
 	void OnActionJump();
+	
 	void OnActionFirePressed();
 	void OnActionFireReleased();
 	#pragma endregion
+
+	void OnActionRunPressed();
+	void OnActionRunReleased();
 	
+	void OnActionCrouchPressed();
+
+	float walkSpeed = 400;
+	float runSpeed = 600;
+	float crouchSpeed = 200;
+
+	bool isCrouch;
+
 #pragma region Movement
 	FVector direction;
-	float walkSpeed = 600;
+	//float walkSpeed = 400;
 #pragma endregion
 
 	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
@@ -104,4 +116,10 @@ public:
 
 	UPROPERTY(EditAnywhere)			//don't need UPROPERTY because we find the file in the constructor automatically
 	class USoundBase* sniperFireSound;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCameraShakeBase> camShakeFactory;
+	
+	UPROPERTY(EditAnywhere)			
+	class UCameraShakeBase* canShakeInstance;
 };

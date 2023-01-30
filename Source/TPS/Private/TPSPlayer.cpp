@@ -100,6 +100,8 @@ void ATPSPlayer::BeginPlay()
 	ChooseGun(true);
 	//ChooseGun(GRENADELAUNCHER);
 
+	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+	isCrouch = false;
 }
 
 // Called every frame
@@ -133,6 +135,11 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	
 	PlayerInputComponent->BindAction(TEXT("Jump"),IE_Pressed, this, &ATPSPlayer::OnActionJump);
 	#pragma endregion
+
+	PlayerInputComponent->BindAction(TEXT("Run"),IE_Pressed, this, &ATPSPlayer::OnActionRunPressed);
+	PlayerInputComponent->BindAction(TEXT("Run"),IE_Released, this, &ATPSPlayer::OnActionRunReleased);
+
+	PlayerInputComponent->BindAction(TEXT("Crouch"),IE_Pressed, this, &ATPSPlayer::OnActionCrouchPressed);
 
 #pragma region Gun
 	PlayerInputComponent->BindAction(TEXT("Fire"),IE_Pressed, this, &ATPSPlayer::OnActionFirePressed);
@@ -177,6 +184,23 @@ void ATPSPlayer::OnActionJump()
 
 void ATPSPlayer::OnActionFirePressed()
 {
+
+	#pragma region Camera Shake
+	APlayerCameraManager* cameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+
+	//if already shaking cancel, and shake again
+	//check if canShakeInstance is nullptr
+	if(canShakeInstance && !canShakeInstance->IsFinished()){
+		cameraManager->StopCameraShake(canShakeInstance);
+	}
+
+	canShakeInstance = cameraManager->StartCameraShake((camShakeFactory));
+	
+	//Same thing
+	/*auto controller  = Cast<APlayerController>(GetController());
+	auto cameraManager = controller->PlayerCameraManager;*/
+	#pragma endregion Camera Shake
+	
 	//Play shooting animation
 	UTPSPlayerAnim* anim = Cast<UTPSPlayerAnim>(GetMesh()->GetAnimInstance());
 	if(anim){
@@ -252,7 +276,32 @@ void ATPSPlayer::OnActionFireReleased()
 	GetWorldTimerManager().ClearTimer(fireTimerHandle);
 
 }
+
+
+
+
 #pragma endregion
+
+void ATPSPlayer::OnActionRunPressed()
+{
+	GetCharacterMovement()->MaxWalkSpeed = runSpeed;
+}
+
+void ATPSPlayer::OnActionRunReleased()
+{
+	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+}
+
+void ATPSPlayer::OnActionCrouchPressed()
+{
+	isCrouch = !isCrouch;
+	if(isCrouch){
+		GetCharacterMovement()->MaxWalkSpeed = crouchSpeed;
+	}
+	else{
+		GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+	}
+}
 
 void ATPSPlayer::Fire()
 {
