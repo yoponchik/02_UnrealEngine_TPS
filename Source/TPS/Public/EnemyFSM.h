@@ -34,6 +34,9 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	EEnemyState enemyState;
+
+	void SetState(EEnemyState next);
+
 	
 	class ATPSPlayer* target;
 
@@ -49,7 +52,7 @@ public:
 
 	int enemyHP;
 	int enemyMaxHP = 2;
-
+	
 private:
 	void OnTickIdle();
 	void OnTickDie();

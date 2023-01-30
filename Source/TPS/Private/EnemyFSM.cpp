@@ -8,6 +8,7 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include "../TPS.h"
 #include <Components/CapsuleComponent.h>
+#include "EnemyAnim.h"
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -44,24 +45,39 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 	// ...
 
+	//Continuously update EnemyAnim State with EnemyFSM State
+
+	me->enemyAnim->enemyState = enemyState;
+	
 	switch (enemyState)
 	{
 	case EEnemyState::IDLE:
 		OnTickIdle();
+		//SetAnimState(EEnemyState::IDLE);
 		break;
 	case EEnemyState::MOVE:
 		OnTickMove();
+		//SetAnimState(EEnemyState::MOVE);
 		break;
 	case EEnemyState::ATTACK:
 		OnTickAttack();
+		//SetAnimState(EEnemyState::ATTACK);
 		break;
 	case EEnemyState::DAMAGE:
 		OnTickDamage();
+		//SetAnimState(EEnemyState::DAMAGE);
 		break;
 	case EEnemyState::DIE:
 		OnTickDie();
+		//SetAnimState(EEnemyState::DIE);
 		break;
 	}
+}
+
+void UEnemyFSM::SetState(EEnemyState next)
+{
+	enemyState = next;
+	me->enemyAnim->enemyState = next;
 }
 
 void UEnemyFSM::OnTickMove()
@@ -77,7 +93,8 @@ void UEnemyFSM::OnTickMove()
 	//float dist = FVector::Dist(target->GetActorLocation(), me->GetActorLocation());
 
 	if (dist <= attackDistance) {
-		enemyState = EEnemyState::ATTACK;
+		//enemyState = EEnemyState::ATTACK;
+		SetState(EEnemyState::ATTACK);
 	}
 }
 
@@ -94,8 +111,9 @@ void UEnemyFSM::OnTickIdle()
 	
 	if (!target) { return; }				//Note that this is after the cast; or else if it's before the cast, it won't run the rest of the function
 
-	enemyState = EEnemyState::MOVE;
-	
+	//enemyState = EEnemyState::MOVE;
+	SetState(EEnemyState::MOVE);
+
 	//2. if player is found
 	//3. transition to Move
 }
@@ -126,7 +144,7 @@ void UEnemyFSM::OnTickAttack()
 		float distance = target->GetDistanceTo(me);
 		if (distance > attackDistance) {
 			//4. move
-			enemyState = EEnemyState::MOVE;
+			SetState(EEnemyState::MOVE);
 		}
 		else {	//if inside the attackdistance
 			currentTime = 0;
@@ -152,7 +170,8 @@ void UEnemyFSM::OnTickDamage()
 	currentTime += GetWorld()->GetDeltaSeconds();
 
 	if (currentTime > 1) {
-		enemyState = EEnemyState::IDLE;
+		//enemyState = EEnemyState::IDLE;
+		SetState(EEnemyState::IDLE);
 		currentTime = 0;
 	}
 }
@@ -165,11 +184,13 @@ void UEnemyFSM::OnDamageProcess(int damageAmount)
 	enemyHP -= damageAmount;
 	//if less than 0
 	if (enemyHP <= 0) {
-		enemyState = EEnemyState::DIE;
+		//enemyState = EEnemyState::DIE;
+		SetState(EEnemyState::DIE);
 		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	else {
-		enemyState = EEnemyState::DAMAGE;
+		//enemyState = EEnemyState::DAMAGE;
+		SetState(EEnemyState::DAMAGE);
 	}
 }
 
