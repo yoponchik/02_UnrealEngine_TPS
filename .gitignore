@@ -765,3 +765,6 @@ Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/Development/Ri
 Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/Development/RiderShaderInfo/UnrealEditor-RiderShaderInfo.exp
 Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/Development/RiderShaderInfo/UnrealEditor-RiderShaderInfo.suppressed.exp
 Plugins/Developer/RiderLink/Intermediate/FileSystemMappings.ini
+*.pdb
+*.response
+*.exp
