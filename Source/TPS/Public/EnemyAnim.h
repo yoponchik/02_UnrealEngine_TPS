@@ -19,4 +19,19 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EEnemyState enemyState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bAttackPlay;
+	
+	// //attack animation
+	// UFUNCTION(BlueprintCallable)
+	// void OnHitEvent();
+
+	UFUNCTION()
+	void AnimNotify_OnHit();
+
+	UPROPERTY()
+	class AEnemy* me;
+
+	virtual void NativeBeginPlay() override;
 };
