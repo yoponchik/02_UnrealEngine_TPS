@@ -22,5 +22,7 @@ void UEnemyAnim::NativeBeginPlay()
 
 void UEnemyAnim::AnimNotify_OnHit()
 {
+	if(this == nullptr){return;}
+	
 	me->enemyFSM->OnHitEvent();
 }
