@@ -35,6 +35,6 @@ public:
 	//Enemy damage
 	//declare and call in c++, implement in blueprint
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnMyDamage();					//When player damages the enemy
+	void OnMyDamage(FName sectionName);					//When player damages the enemy
 	
 };
