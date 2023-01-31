@@ -241,6 +241,7 @@ void ATPSPlayer::OnActionFirePressed()
 			if (enemy) {
 				UEnemyFSM* fsmComponent = Cast<UEnemyFSM>(enemy->GetDefaultSubobjectByName(TEXT("Enemy FSM")));
 				fsmComponent->OnDamageProcess(1);
+				enemy->OnMyDamage();
 			}
 			#pragma endregion
 		

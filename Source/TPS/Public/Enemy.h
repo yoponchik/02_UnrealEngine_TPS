@@ -32,4 +32,9 @@ public:
 	UPROPERTY()
 	class UEnemyAnim* enemyAnim;
 
+	//Enemy damage
+	//declare and call in c++, implement in blueprint
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnMyDamage();					//When player damages the enemy
+	
 };
