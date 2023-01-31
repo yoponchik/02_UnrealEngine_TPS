@@ -99,6 +99,18 @@ void UEnemyFSM::OnTickMove()
 }
 
 
+void UEnemyFSM::OnHitEvent()
+{
+	me->enemyAnim->bAttackPlay = false;							//WAIT FOR ATTACK
+	//3.0 make bAttackPlay = true
+	//3. if target is inside the attackDistance
+	float distance = target->GetDistanceTo(me);
+	if (distance <= attackDistance) {
+		//4. attack
+		PRINT_LOG(TEXT("Enemy Attack"));
+	}
+}
+
 /// <summary>
 /// Idle; Transition to Move after finding player
 /// </summary>
@@ -124,21 +136,10 @@ void UEnemyFSM::OnTickAttack()
 {
 	//1. time runs
 	currentTime += GetWorld()->GetDeltaSeconds(); 
-	//2. if currentTime exceeds attacktime && bAttackPlay animation is not done yet
-	if (!bAttackPlay && currentTime > 0.1f) {
-		//3.0 make bAttackPlay = true
-		bAttackPlay = true;
-		//3. if target is inside the attackDistance
-		float distance = target->GetDistanceTo(me);
-		if (distance <= attackDistance) {
-		//4. attack
-			PRINT_LOG(TEXT("Enemy Attack"));
-		}
-	}
 
 
 	//5. if the attack action is finished
-	if (currentTime > 2) {
+	if (currentTime > attackDelayTime) {
 	//6. Check if should attack or not
 		//6. if far from attackDistance, change to move
 		float distance = target->GetDistanceTo(me);
@@ -148,8 +149,9 @@ void UEnemyFSM::OnTickAttack()
 		}
 		else {	//if inside the attackdistance
 			currentTime = 0;
-			bAttackPlay = false;
-		}
+			bAttackPlay = false;					
+			me->enemyAnim->bAttackPlay = true;						//ATTACK
+		}		
 	}
 
 	#pragma region Alternative - Can be Buggy

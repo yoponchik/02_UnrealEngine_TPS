@@ -52,6 +52,12 @@ public:
 
 	int enemyHP;
 	int enemyMaxHP = 2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FSM")
+	float attackDelayTime = 3;	
+
+	//animation
+	void OnHitEvent();
 	
 private:
 	void OnTickIdle();
