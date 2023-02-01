@@ -59,6 +59,9 @@ public:
 	//animation
 	void OnHitEvent();
 
+	//AI Movement
+	class AAIController* aI;
+
 private:
 	void OnTickIdle();
 	void OnTickDie();

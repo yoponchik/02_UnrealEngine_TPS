@@ -9,6 +9,7 @@
 #include "../TPS.h"
 #include <Components/CapsuleComponent.h>
 #include "EnemyAnim.h"
+#include "AIController.h"
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -31,6 +32,7 @@ void UEnemyFSM::BeginPlay()
 	enemyState = EEnemyState::IDLE;
 
 	me = Cast<AEnemy>(GetOwner());
+	aI = Cast<AAIController>(me->GetController());
 	//add
 	me->GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -84,9 +86,10 @@ void UEnemyFSM::SetState(EEnemyState next)
 
 void UEnemyFSM::OnTickMove()
 {
-
 	FVector dir = target->GetActorLocation() - me->GetActorLocation();
-	me->AddMovementInput(dir.GetSafeNormal());
+
+	//AI Movement
+	aI->MoveToLocation(target->GetActorLocation());
 
 	float dist = dir.Size();				//it's okay to do this after normalizing, because we did GetSafeNormal, which copied it
 	//Same thing
