@@ -241,21 +241,6 @@ void ATPSPlayer::OnActionFirePressed()
 			if (enemy) {
 				UEnemyFSM* fsmComponent = Cast<UEnemyFSM>(enemy->GetDefaultSubobjectByName(TEXT("Enemy FSM")));
 				fsmComponent->OnDamageProcess(1);
-
-				int index = FMath::RandRange(0,1);
-				FString sectionName = FString::Printf(TEXT("Damage%d"), index);
-
-				enemy->OnMyDamage(FName(*sectionName));
-
-				#pragma region Random Damage Method 1
-				
-				/*if(FMath::RandRange(0, 100) > 50){
-					enemy->OnMyDamage((TEXT("Damage0")));
-				}
-				else{
-					enemy->OnMyDamage((TEXT("Damaage1")));
-				}*/
-				#pragma endregion Random Damage Method 1
 			}
 			#pragma endregion
 		

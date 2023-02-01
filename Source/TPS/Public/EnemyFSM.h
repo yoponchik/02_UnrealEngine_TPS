@@ -58,7 +58,7 @@ public:
 
 	//animation
 	void OnHitEvent();
-	
+
 private:
 	void OnTickIdle();
 	void OnTickDie();

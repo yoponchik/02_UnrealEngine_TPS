@@ -78,6 +78,8 @@ void UEnemyFSM::SetState(EEnemyState next)
 {
 	enemyState = next;
 	me->enemyAnim->enemyState = next;
+
+	currentTime = 0;
 }
 
 void UEnemyFSM::OnTickMove()
@@ -173,7 +175,7 @@ void UEnemyFSM::OnTickDamage()
 
 	if (currentTime > 1) {
 		//enemyState = EEnemyState::IDLE;
-		SetState(EEnemyState::IDLE);
+		SetState(EEnemyState::MOVE);
 		currentTime = 0;
 	}
 }
@@ -188,16 +190,40 @@ void UEnemyFSM::OnDamageProcess(int damageAmount)
 	if (enemyHP <= 0) {
 		//enemyState = EEnemyState::DIE;
 		SetState(EEnemyState::DIE);
+
+		me->enemyAnim->bEnemyDieEnd = false;
+		me->OnMyDamage(TEXT("Die"));
+		
 		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	else {
 		//enemyState = EEnemyState::DAMAGE;
 		SetState(EEnemyState::DAMAGE);
+
+		int index = FMath::RandRange(0,1);
+		FString sectionName = FString::Printf(TEXT("Damage%d"), index);
+
+		me->OnMyDamage(FName(*sectionName));
+
+		#pragma region Random Damage Method 1
+		/*if(FMath::RandRange(0, 100) > 50){
+			me->OnMyDamage((TEXT("Damage0")));
+		}
+		else{
+			me->OnMyDamage((TEXT("Damaage1")));
+		}*/
+		#pragma endregion Random Damage Method 1
 	}
 }
 
 void UEnemyFSM::OnTickDie()
 {
+	//if bEnemyDieEnd is false, don't do anything
+	if(!(me->enemyAnim->bEnemyDieEnd)){
+		return;
+	}
+
+	//if bEnemyDieEnd flag is true, die
 	currentTime += GetWorld()->GetDeltaSeconds();
 
 	FVector p0 = me->GetActorLocation();
