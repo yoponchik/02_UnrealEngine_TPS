@@ -10,6 +10,7 @@
 #include <Components/CapsuleComponent.h>
 #include "EnemyAnim.h"
 #include "AIController.h"
+#include "NavigationSystem.h"
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -37,6 +38,10 @@ void UEnemyFSM::BeginPlay()
 	me->GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	enemyHP = enemyMaxHP;
+
+	//Navigation
+	//Create random destination when spawned
+	UpdateRandomLocation(randomLocationRadius, randomLocation);
 }
 
 
@@ -86,17 +91,52 @@ void UEnemyFSM::SetState(EEnemyState next)
 
 void UEnemyFSM::OnTickMove()
 {
+	//get direction to target
 	FVector dir = target->GetActorLocation() - me->GetActorLocation();
 
-	//AI Movement
-	aI->MoveToLocation(target->GetActorLocation());
+#pragma region Navigation - Using Navigation Invoker
+	//check if there is a target on the generated navmesh
+	UNavigationSystemV1* nS = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 
+	FPathFindingQuery query;
+	FAIMoveRequest request;
+
+	//make a pathfinding request
+	request.SetGoalLocation(target->GetActorLocation());		//Set Navigation goal location
+	request.SetAcceptanceRadius(5);								 //??
+
+	//make a pathfinding query from request
+	aI->BuildPathfindingQuery(request, query);				//getting query from request
+
+	//get the pathfinding request result from query
+	FPathFindingResult result = nS->FindPathSync(query);
+	
+	//if query result is a success
+	if(result.Result == ENavigationQueryResult::Success){
+		//Move to that target
+		aI->MoveToLocation(target->GetActorLocation());				
+	}
+	//if target not on navigation, go to random location
+	else{
+		
+		auto navigationSatus = aI->MoveToLocation(randomLocation);
+		if(navigationSatus == EPathFollowingRequestResult::AlreadyAtGoal || navigationSatus == EPathFollowingRequestResult::Failed){
+			//if arrived at location, choose new random location
+			UpdateRandomLocation(randomLocationRadius, randomLocation);
+		}
+		
+	}
+#pragma endregion Nav Invoker
+
+	
+	//get distance between target and AI
 	float dist = dir.Size();				//it's okay to do this after normalizing, because we did GetSafeNormal, which copied it
 	//Same thing
 	//float dist = target->GetDistanceTo(me);
 	//Same thing
 	//float dist = FVector::Dist(target->GetActorLocation(), me->GetActorLocation());
 
+	//if within the attack range
 	if (dist <= attackDistance) {
 		//enemyState = EEnemyState::ATTACK;
 		SetState(EEnemyState::ATTACK);
@@ -114,6 +154,20 @@ void UEnemyFSM::OnHitEvent()
 		//4. attack
 		PRINT_LOG(TEXT("Enemy Attack"));
 	}
+}
+
+bool UEnemyFSM::UpdateRandomLocation(float radius, FVector& outLocation)
+{
+	UNavigationSystemV1* randomNS = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+
+	FNavLocation navLocation;
+	
+	bool result = randomNS->GetRandomReachablePointInRadius(me->GetActorLocation(), radius, navLocation);
+
+	if(result){
+		outLocation = navLocation;
+	}
+	return result;
 }
 
 /// <summary>
