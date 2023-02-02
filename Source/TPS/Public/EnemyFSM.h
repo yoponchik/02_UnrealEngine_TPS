@@ -50,8 +50,7 @@ public:
 
 	void OnDamageProcess(int damageAmount);
 
-	int enemyHP;
-	int enemyMaxHP = 2;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FSM")
 	float attackDelayTime = 3;	

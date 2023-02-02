@@ -36,5 +36,13 @@ public:
 	//declare and call in c++, implement in blueprint
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnMyDamage(FName sectionName);					//When player damages the enemy
+
+	//health
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int enemyHP;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int enemyMaxHP = 2;
+
 	
 };
