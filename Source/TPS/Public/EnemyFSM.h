@@ -62,6 +62,12 @@ public:
 	//AI Movement
 	class AAIController* aI;
 
+	bool UpdateRandomLocation(float radius, FVector& outLocation);
+
+	UPROPERTY(EditAnywhere)
+	float randomLocationRadius = 500;
+
+	FVector randomLocation;
 private:
 	void OnTickIdle();
 	void OnTickDie();
