@@ -37,7 +37,7 @@ void UEnemyFSM::BeginPlay()
 	//add
 	me->GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	enemyHP = enemyMaxHP;
+	me->enemyHP = me->enemyMaxHP;
 
 	//Navigation
 	//Create random destination when spawned
@@ -242,9 +242,9 @@ void UEnemyFSM::OnTickDamage()
 void UEnemyFSM::OnDamageProcess(int damageAmount)
 {
 	//hp decreases
-	enemyHP -= damageAmount;
+	me->enemyHP -= damageAmount;
 	//if less than 0
-	if (enemyHP <= 0) {
+	if (me->enemyHP <= 0) {
 		//enemyState = EEnemyState::DIE;
 		SetState(EEnemyState::DIE);
 
