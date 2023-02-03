@@ -11,6 +11,7 @@
 #include "EnemyAnim.h"
 #include "AIController.h"
 #include "NavigationSystem.h"
+#include "PathManager.h"
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -44,7 +45,9 @@ void UEnemyFSM::BeginPlay()
 	UpdateRandomLocation(randomLocationRadius, randomLocation);
 
 	moveSubState = EEnemyMoveSubState::PATROL;
-	
+
+	//waypoint
+	pathManager = Cast<APathManager>(UGameplayStatics::GetActorOfClass(GetWorld(), APathManager::StaticClass()));	
 }
 
 
@@ -92,7 +95,7 @@ void UEnemyFSM::SetState(EEnemyState next)
 	currentTime = 0;
 }
 
-void UEnemyFSM::TickOldMove()
+void UEnemyFSM::OnTickOldMove()
 {
 #pragma region Navigation - Using Navigation Invoker
 	//check if there is a target on the generated navmesh
@@ -129,15 +132,36 @@ void UEnemyFSM::TickOldMove()
 #pragma endregion Nav Invoker
 }
 
+void UEnemyFSM::OnTickPatrol()
+{
+	FVector patrolDestination = pathManager->wayPointsArray[wayPtIndex]->GetActorLocation();
+	auto result = aI->MoveToLocation(patrolDestination);
+	if(result == EPathFollowingRequestResult::AlreadyAtGoal || result == EPathFollowingRequestResult::Failed){
+		
+		wayPtIndex= (wayPtIndex + 1) % pathManager->wayPointsArray.Num();
+		/*wayPtIndex++;
+		if(wayPtIndex >= pathManager->wayPointsArray.Num()){
+			wayPtIndex = 0;
+		}*/
+	}
+}
+
+void UEnemyFSM::OnTickChase()
+{
+	
+}
+
 void UEnemyFSM::OnTickMove()
 {
 	switch (moveSubState){
 	case EEnemyMoveSubState::PATROL:
+		OnTickPatrol();
 		break;
 	case EEnemyMoveSubState::CHASE:
+		OnTickChase();
 		break;
 	case EEnemyMoveSubState::OLD_MOVE:
-		TickOldMove();
+		OnTickOldMove();
 		break;
 	}
 	

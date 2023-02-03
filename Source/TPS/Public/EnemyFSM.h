@@ -45,7 +45,7 @@ public:
 	void SetState(EEnemyState next);
 
 	EEnemyMoveSubState moveSubState;
-	void TickOldMove();
+	
 	
 	UPROPERTY()
 	class ATPSPlayer* target;
@@ -78,12 +78,22 @@ public:
 	float randomLocationRadius = 500;
 
 	FVector randomLocation;
+
+	//Patrol
+	UPROPERTY()
+	class APathManager* pathManager;
+
+	int wayPtIndex;
 private:
 	void OnTickIdle();
 	void OnTickDie();
 	void OnTickDamage();
 	void OnTickAttack();
 	void OnTickMove();
+
+	void OnTickOldMove();
+	void OnTickPatrol();
+	void OnTickChase();
 
 
 };
