@@ -117,9 +117,12 @@ public:
 	UPROPERTY(EditAnywhere)			//don't need UPROPERTY because we find the file in the constructor automatically
 	class USoundBase* sniperFireSound;
 
+	//cam shake
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCameraShakeBase> camShakeFactory;
 	
 	UPROPERTY(EditAnywhere)			
 	class UCameraShakeBase* canShakeInstance;
+
+
 };

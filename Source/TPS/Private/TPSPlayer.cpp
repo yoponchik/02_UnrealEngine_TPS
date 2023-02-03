@@ -102,6 +102,8 @@ void ATPSPlayer::BeginPlay()
 
 	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 	isCrouch = false;
+
+
 }
 
 // Called every frame
