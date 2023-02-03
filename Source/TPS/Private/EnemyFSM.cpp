@@ -139,6 +139,9 @@ void UEnemyFSM::OnTickPatrol()
 	if(result == EPathFollowingRequestResult::AlreadyAtGoal || result == EPathFollowingRequestResult::Failed){
 		
 		wayPtIndex= (wayPtIndex + 1) % pathManager->wayPointsArray.Num();
+
+		//going the opposite way
+		//wayPtIndex = (wayPtIndex + pathManager->wayPointsArray.Num() - 1) % pathManager->wayPointsArray.Num();
 		/*wayPtIndex++;
 		if(wayPtIndex >= pathManager->wayPointsArray.Num()){
 			wayPtIndex = 0;
