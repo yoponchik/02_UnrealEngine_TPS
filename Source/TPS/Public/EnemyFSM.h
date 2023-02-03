@@ -10,10 +10,18 @@
 UENUM(BlueprintType)
 enum class EEnemyState : uint8 {
 	IDLE, 
-	MOVE, 
+	MOVE,
 	ATTACK, 
 	DAMAGE, 
 	DIE
+};
+
+UENUM(BlueprintType)
+enum class EEnemyMoveSubState : uint8
+{
+	PATROL,
+	CHASE,
+	OLD_MOVE
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -34,12 +42,15 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	EEnemyState enemyState;
-
 	void SetState(EEnemyState next);
 
+	EEnemyMoveSubState moveSubState;
+	void TickOldMove();
 	
+	UPROPERTY()
 	class ATPSPlayer* target;
 
+	UPROPERTY()
 	class AEnemy* me;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FSM")

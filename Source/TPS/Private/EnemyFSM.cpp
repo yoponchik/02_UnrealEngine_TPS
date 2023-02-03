@@ -42,6 +42,9 @@ void UEnemyFSM::BeginPlay()
 	//Navigation
 	//Create random destination when spawned
 	UpdateRandomLocation(randomLocationRadius, randomLocation);
+
+	moveSubState = EEnemyMoveSubState::PATROL;
+	
 }
 
 
@@ -89,11 +92,8 @@ void UEnemyFSM::SetState(EEnemyState next)
 	currentTime = 0;
 }
 
-void UEnemyFSM::OnTickMove()
+void UEnemyFSM::TickOldMove()
 {
-	//get direction to target
-	FVector dir = target->GetActorLocation() - me->GetActorLocation();
-
 #pragma region Navigation - Using Navigation Invoker
 	//check if there is a target on the generated navmesh
 	UNavigationSystemV1* nS = UNavigationSystemV1::GetNavigationSystem(GetWorld());
@@ -103,7 +103,7 @@ void UEnemyFSM::OnTickMove()
 
 	//make a pathfinding request
 	request.SetGoalLocation(target->GetActorLocation());		//Set Navigation goal location
-	request.SetAcceptanceRadius(5);								 //??
+	request.SetAcceptanceRadius(5);								 //The error tolerance distance
 
 	//make a pathfinding query from request
 	aI->BuildPathfindingQuery(request, query);				//getting query from request
@@ -119,16 +119,31 @@ void UEnemyFSM::OnTickMove()
 	//if target not on navigation, go to random location
 	else{
 		
-		auto navigationSatus = aI->MoveToLocation(randomLocation);
-		if(navigationSatus == EPathFollowingRequestResult::AlreadyAtGoal || navigationSatus == EPathFollowingRequestResult::Failed){
+		auto navigationStatus = aI->MoveToLocation(randomLocation);
+		if(navigationStatus == EPathFollowingRequestResult::AlreadyAtGoal || navigationStatus == EPathFollowingRequestResult::Failed){
 			//if arrived at location, choose new random location
 			UpdateRandomLocation(randomLocationRadius, randomLocation);
 		}
 		
 	}
 #pragma endregion Nav Invoker
+}
 
+void UEnemyFSM::OnTickMove()
+{
+	switch (moveSubState){
+	case EEnemyMoveSubState::PATROL:
+		break;
+	case EEnemyMoveSubState::CHASE:
+		break;
+	case EEnemyMoveSubState::OLD_MOVE:
+		TickOldMove();
+		break;
+	}
 	
+	//get direction to target
+	FVector dir = target->GetActorLocation() - me->GetActorLocation();
+
 	//get distance between target and AI
 	float dist = dir.Size();				//it's okay to do this after normalizing, because we did GetSafeNormal, which copied it
 	//Same thing
