@@ -61,8 +61,6 @@ public:
 
 	void OnDamageProcess(int damageAmount);
 
-
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FSM")
 	float attackDelayTime = 3;	
 
@@ -84,6 +82,14 @@ public:
 	class APathManager* pathManager;
 
 	int wayPtIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float detectionDistance = 500;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float abandonDistance = 800;						//has to be larger than the detectionDistance
+	
+	
 private:
 	void OnTickIdle();
 	void OnTickDie();

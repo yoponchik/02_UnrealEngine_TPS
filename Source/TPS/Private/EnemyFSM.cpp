@@ -153,15 +153,44 @@ void UEnemyFSM::OnTickPatrol()
 		//Random Order 
 		//wayPtIndex = FMath::RandRange(0, pathManager->wayPointsArray.Num() -1);
 		//same thing
-		wayPtIndex = FMath::RandRange(0, pathManager->wayPointsArray.Last);
-		
-		
+		wayPtIndex = FMath::RandRange(0, pathManager->wayPointsArray.Num() - 1);
+	}
+
+	//Transition to Chase
+	//check the distance between the target and this
+	float distance = me->GetDistanceTo(target);
+	//if the target is within the detectionDistance,
+	if(distance < detectionDistance){	
+		//transition to Chase State
+		moveSubState = EEnemyMoveSubState::CHASE;
 	}
 }
 
 void UEnemyFSM::OnTickChase()
 {
-	
+	aI->MoveToLocation(target->GetActorLocation());
+
+	//get direction to target
+	FVector dir = target->GetActorLocation() - me->GetActorLocation();
+
+	//get distance between target and AI
+	float dist = dir.Size();				//it's okay to do this after normalizing, because we did GetSafeNormal, which copied it
+	//Same thing
+	//float dist = target->GetDistanceTo(me);
+	//Same thing
+	//float dist = FVector::Dist(target->GetActorLocation(), me->GetActorLocation());
+
+	//Transition to Attack
+	//if within the attack range
+	if (dist <= attackDistance) {
+		//enemyState = EEnemyState::ATTACK;
+		SetState(EEnemyState::ATTACK);
+	}
+
+	//Transition to Patrol
+	else if(dist > abandonDistance){
+		moveSubState = EEnemyMoveSubState::PATROL;
+	}
 }
 
 void UEnemyFSM::OnTickMove()
@@ -178,21 +207,7 @@ void UEnemyFSM::OnTickMove()
 		break;
 	}
 	
-	//get direction to target
-	FVector dir = target->GetActorLocation() - me->GetActorLocation();
 
-	//get distance between target and AI
-	float dist = dir.Size();				//it's okay to do this after normalizing, because we did GetSafeNormal, which copied it
-	//Same thing
-	//float dist = target->GetDistanceTo(me);
-	//Same thing
-	//float dist = FVector::Dist(target->GetActorLocation(), me->GetActorLocation());
-
-	//if within the attack range
-	if (dist <= attackDistance) {
-		//enemyState = EEnemyState::ATTACK;
-		SetState(EEnemyState::ATTACK);
-	}
 }
 
 
