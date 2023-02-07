@@ -137,15 +137,25 @@ void UEnemyFSM::OnTickPatrol()
 	FVector patrolDestination = pathManager->wayPointsArray[wayPtIndex]->GetActorLocation();
 	auto result = aI->MoveToLocation(patrolDestination);
 	if(result == EPathFollowingRequestResult::AlreadyAtGoal || result == EPathFollowingRequestResult::Failed){
-		
-		wayPtIndex= (wayPtIndex + 1) % pathManager->wayPointsArray.Num();
-
-		//going the opposite way
-		//wayPtIndex = (wayPtIndex + pathManager->wayPointsArray.Num() - 1) % pathManager->wayPointsArray.Num();
+		//Numerical Order - Ascending Method 1
 		/*wayPtIndex++;
 		if(wayPtIndex >= pathManager->wayPointsArray.Num()){
 			wayPtIndex = 0;
 		}*/
+
+		//Numerical Order - Ascending Method 2
+		//wayPtIndex= (wayPtIndex + 1) % pathManager->wayPointsArray.Num();
+
+		//Numerical Order - Descending Method 
+		//wayPtIndex = (wayPtIndex + pathManager->wayPointsArray.Num() - 1) % pathManager->wayPointsArray.Num();
+
+		
+		//Random Order 
+		//wayPtIndex = FMath::RandRange(0, pathManager->wayPointsArray.Num() -1);
+		//same thing
+		wayPtIndex = FMath::RandRange(0, pathManager->wayPointsArray.Last);
+		
+		
 	}
 }
 
