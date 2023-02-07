@@ -22,6 +22,11 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere)
+	TArray<AActor*> spawnList;
+
+	int prevRandIndex = -1;
 	
 	UPROPERTY(EditAnywhere)
 	float createTime;

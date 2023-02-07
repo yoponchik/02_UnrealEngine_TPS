@@ -3,6 +3,8 @@
 
 #include "SpawnManager.h"
 #include "Enemy.h"
+#include "SpawnPoint.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASpawnManager::ASpawnManager()
@@ -17,6 +19,8 @@ void ASpawnManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnPoint::StaticClass(), spawnList);
+	
 	int randTime = FMath::RandRange(minTime, maxTime);
 	GetWorldTimerManager().SetTimer(timerHandleSpawnEnemy, this, &ASpawnManager::MakeEnemy, 2);
 
@@ -32,8 +36,18 @@ void ASpawnManager::Tick(float DeltaTime)
 
 void ASpawnManager::MakeEnemy()
 {
-	FVector spawnLocation = GetActorLocation();
-	FRotator spawnRotation = GetActorRotation();
+
+	int randomIndex = 0;
+
+	randomIndex = FMath::RandRange(0, spawnList.Num() -1);
+
+	if(randomIndex != prevRandIndex){
+		randomIndex = (randomIndex + 1) % spawnList.Num();
+	}
+	prevRandIndex = randomIndex;
+	
+	FVector spawnLocation = spawnList[randomIndex]->GetActorLocation();
+	FRotator spawnRotation = spawnList[randomIndex]->GetActorRotation();
 	GetWorld()->SpawnActor<AEnemy>(enemyFactory, spawnLocation, spawnRotation);
 	
 	int randTime = FMath::RandRange(minTime, maxTime);
