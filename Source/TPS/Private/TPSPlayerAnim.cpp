@@ -28,7 +28,10 @@ void UTPSPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 	moveComp = owner->GetCharacterMovement();
 	isInAir = moveComp->IsFalling();
 	*/
-	
+
+
+	//crouch
+	isCrouching = owner->GetCharacterMovement()->IsCrouching();
 }
 
 void UTPSPlayerAnim::OnFire()
