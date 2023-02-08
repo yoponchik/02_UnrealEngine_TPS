@@ -12,6 +12,7 @@
 #include "AIController.h"
 #include "NavigationSystem.h"
 #include "PathManager.h"
+#include "TPS/TPSGameModeBase.h"
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -312,6 +313,7 @@ void UEnemyFSM::OnDamageProcess(int damageAmount)
 	me->enemyHP -= damageAmount;
 	//if less than 0
 	if (me->enemyHP <= 0) {
+		me->enemyHP = 0;						//to change negative HP into 0
 		//enemyState = EEnemyState::DIE;
 		SetState(EEnemyState::DIE);
 
@@ -319,6 +321,9 @@ void UEnemyFSM::OnDamageProcess(int damageAmount)
 		me->OnMyDamage(TEXT("Die"));
 		
 		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		//Call GameMode's AddEXP function. add 1
+		Cast<ATPSGameModeBase>(GetWorld()->GetAuthGameMode())->AddEXP(1);
 	}
 	else {
 		//enemyState = EEnemyState::DAMAGE;
