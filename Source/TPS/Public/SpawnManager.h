@@ -40,7 +40,15 @@ public:
 	FTimerHandle timerHandleSpawnEnemy;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AEnemy> enemyFactory;
+	TArray<TSubclassOf<class AEnemy>> enemyFactory;
 
 	void MakeEnemy();
+
+	//#of enemies in level
+	int spawnCount;
+
+	//# of enemies to make
+	int targetSpawnCount;
+
+	
 };
