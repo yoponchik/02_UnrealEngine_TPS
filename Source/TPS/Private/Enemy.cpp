@@ -29,6 +29,7 @@ AEnemy::AEnemy()
 	//State Machine
 	enemyFSM = CreateDefaultSubobject<UEnemyFSM>(TEXT("Enemy FSM"));
 
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned
