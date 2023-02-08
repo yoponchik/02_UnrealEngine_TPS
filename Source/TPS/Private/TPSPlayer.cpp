@@ -298,10 +298,12 @@ void ATPSPlayer::OnActionCrouchPressed()
 {
 	isCrouch = !isCrouch;
 	if(isCrouch){
-		GetCharacterMovement()->MaxWalkSpeed = crouchSpeed;
+		GetCharacterMovement()->MaxWalkSpeedCrouched = crouchSpeed;
+		Crouch();
 	}
 	else{
-		GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+		GetCharacterMovement()->MaxWalkSpeedCrouched = walkSpeed;
+		UnCrouch();
 	}
 }
 
