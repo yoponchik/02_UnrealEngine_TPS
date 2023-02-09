@@ -211,7 +211,7 @@ void UEnemyFSM::OnTickMove()
 
 }
 
-
+//when the enemy attacks the player
 void UEnemyFSM::OnHitEvent()
 {
 	me->enemyAnim->bAttackPlay = false;							//WAIT FOR ATTACK
@@ -220,7 +220,7 @@ void UEnemyFSM::OnHitEvent()
 	float distance = target->GetDistanceTo(me);
 	if (distance <= attackDistance) {
 		//4. attack
-		PRINT_LOG(TEXT("Enemy Attack"));
+		target->OnTakeDamage(1);
 	}
 }
 
