@@ -6,8 +6,7 @@
 #include "GameFramework/Character.h"
 #include "TPSPlayer.generated.h"
 
-#define GRENADELAUNCHER true
-#define SNIPER true
+DECLARE_MULTICAST_DELEGATE_OneParam(FSetupPlayerInputDelegate, class UInputComponent*)
 
 UCLASS()
 class TPS_API ATPSPlayer : public ACharacter
@@ -29,7 +28,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	#pragma region Components
+
 	UPROPERTY(EditAnywhere, Category = "Player Settings | Components")
 	class USpringArmComponent* springArmComp;
 
@@ -41,88 +40,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Settings | Gun Settings")
 	class UStaticMeshComponent* sniperMeshComp;
-	#pragma endregion
 
-	#pragma region Input Actions
-	void OnAxisHorizontal(float value);
-	void OnAxisVertical(float value);
-	void OnAxisLookUp(float value);
-	void OnAxisTurnRight(float value);
-	
-	void OnActionJump();
-	
-	void OnActionFirePressed();
-	void OnActionFireReleased();
-	#pragma endregion
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Components")
+		class UTPSPlayerMoveComponent* moveComp;
 
-	void OnActionRunPressed();
-	void OnActionRunReleased();
-	
-	void OnActionCrouchPressed();
-
-	float walkSpeed = 400;
-	float runSpeed = 600;
-	float crouchSpeed = 200;
-
-	bool isCrouch;
-
-#pragma region Movement
-	FVector direction;
-	//float walkSpeed = 400;
-#pragma endregion
-
-	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
-	TSubclassOf<class ABulletActor> bulletFactory;
-
-	UPROPERTY(EditAnywhere, Category = "Player Settings | Gun Settings")
-	float fireInterval = 0.5f;
-
-	//AutoFire
-	FTimerHandle fireTimerHandle;						//this is like a receipt
-
-	void Fire();
-
-#pragma region UI Widgets
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Settings | Gun Settings")
-	TSubclassOf<class UUserWidget> crossHairFactory;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Settings | Gun Settings")
-	TSubclassOf<class UUserWidget> sniperCrossHairFactory;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Settings | Gun Settings")
-	class UUserWidget* crossHairUI;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Settings | Gun Settings")
-	class UUserWidget* sniperCrosshairUI;
-
-	void ChooseGun(bool bGrenadeLauncher);
-
-	void OnActionGrenadeLauncher();
-	void OnActionSniper();
-
-	void OnActionZoomIn();
-	void OnActionZoomOut();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Settings | Gun Settings")
-	bool bIsGrenadeLauncher;
-#pragma endregion
-
-	UPROPERTY(EditAnywhere)
-	class UParticleSystem* bulletImpactFactory;
-
-	//Animation
-	UPROPERTY(EditAnywhere)
-	class UAnimMontage* fireMontageFactory;
-
-	UPROPERTY(EditAnywhere)			//don't need UPROPERTY because we find the file in the constructor automatically
-	class USoundBase* sniperFireSound;
-
-	//cam shake
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UCameraShakeBase> camShakeFactory;
-	
-	UPROPERTY(EditAnywhere)			
-	class UCameraShakeBase* canShakeInstance;
+	UPROPERTY(EditAnywhere, Category = "Player Settings | Components")
+	class UTPSPlayerGunComponent* gunComp;
 
 
+	FSetupPlayerInputDelegate SetupInputDelegate;
 };
