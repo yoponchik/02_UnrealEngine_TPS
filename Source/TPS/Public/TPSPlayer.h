@@ -47,6 +47,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Player Settings | Components")
 	class UTPSPlayerGunComponent* gunComp;
 
-
 	FSetupPlayerInputDelegate SetupInputDelegate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int hP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int maxHP = 2;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnTakeDamage(int damageAmount);
 };

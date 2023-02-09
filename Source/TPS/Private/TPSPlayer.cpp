@@ -79,6 +79,9 @@ ATPSPlayer::ATPSPlayer()
 void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	hP = maxHP;
+
 }
 
 // Called every frame
@@ -95,4 +98,9 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 	SetupInputDelegate.Broadcast(PlayerInputComponent);
 
+}
+
+void ATPSPlayer::OnTakeDamage_Implementation(int damageAmount)
+{
+	hP -= damageAmount;
 }
