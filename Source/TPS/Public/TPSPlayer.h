@@ -41,13 +41,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Settings | Gun Settings")
 	class UStaticMeshComponent* sniperMeshComp;
 
+
 	UPROPERTY(EditAnywhere, Category = "Player Settings | Components")
-		class UTPSPlayerMoveComponent* moveComp;
+	class UTPSPlayerMoveComponent* moveComp;
 
 	UPROPERTY(EditAnywhere, Category = "Player Settings | Components")
 	class UTPSPlayerGunComponent* gunComp;
 
+
 	FSetupPlayerInputDelegate SetupInputDelegate;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int hP;
@@ -55,6 +58,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int maxHP = 2;
 
+	//decrements player HP
 	UFUNCTION(BlueprintNativeEvent)
 	void OnTakeDamage(int damageAmount);
+
+	//function defined in the BP, but called in OnTakeDamage_Implementation
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGameOver();
+
+	//function defined in the BP, but called in OnTakeDamage_Implementation
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnChooseWeaponUI(bool isGrenadeLauncher);
+
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGrenadeLauncherAmmoUpdate(int current, int max);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnSniperAmmoUpdate(int current, int max);
+
 };

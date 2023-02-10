@@ -103,4 +103,10 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 void ATPSPlayer::OnTakeDamage_Implementation(int damageAmount)
 {
 	hP -= damageAmount;
+
+	//if player health is less than or equal to zero
+	if (hP <= 0) {
+		//show gameover screen
+		OnGameOver();
+	}
 }
