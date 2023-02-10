@@ -196,6 +196,8 @@ void UTPSPlayerGunComponent::ChooseGun(bool bGrenadeLauncher)
 
 	//Same thing
 	//sniperMeshComp->SetVisibility(bChooseGrenadeLauncher ? false : true);
+
+	me->OnChooseWeaponUI(bGrenadeLauncher);
 }
 
 void UTPSPlayerGunComponent::OnActionGrenadeLauncher()

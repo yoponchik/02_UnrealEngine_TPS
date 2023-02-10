@@ -88,6 +88,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UCameraShakeBase* canShakeInstance;
+	
+	
 
 
 };
